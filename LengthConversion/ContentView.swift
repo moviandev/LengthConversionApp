@@ -7,14 +7,40 @@
 
 import SwiftUI
 
+
+func defineUnit(_ unitName: String) -> UnitLength {
+    var unit: UnitLength {
+        switch unitName {
+        case "km":
+            return .kilometers
+        case "ft":
+            return .feet
+        case "yd":
+            return .yards
+        case "mi":
+            return .miles
+        default:
+            return .meters
+        }
+        
+    }
+    return unit
+}
+
 struct ContentView: View {
     @State private var inputValue: Double = 0
-    @State private var selectedInputUnit: String = "Km"
-    @State private var selectedOutputUnit: String = "Ft"
+    @State private var selectedInputUnit: String = "m"
+    @State private var selectedOutputUnit: String = "ft"
     
-    let units: [String] = ["Km", "Ft", "Yd", "Mi"]
+    let units: [String] = ["m","ft", "yd", "km", "mi"]
     
-    var output: Double = 0
+    var output: Double {
+        let outputUnit = defineUnit(selectedOutputUnit)
+        let input = defineUnit(selectedInputUnit)
+        let outputValue = Measurement(value: inputValue, unit: input)
+        
+        return round(outputValue.converted(to: outputUnit).value * 100) / 100
+    }
     
     var body: some View {
         NavigationView {
@@ -42,7 +68,7 @@ struct ContentView: View {
                     }
                     .pickerStyle(.segmented)
                 } header: {
-                    Text("Select a unit to input be converted")
+                    Text("Select the output unit")
                 }
             }
             .navigationTitle("Length Conversion")
